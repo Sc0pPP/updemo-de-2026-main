@@ -26,6 +26,7 @@ public partial class OrderEditWindow : Window
         FillLookups();
         if (orderId == 0)
         {
+
             Title = "Добавление заказа — ООО «МирИгрушек»";
             rowId.Visibility = Visibility.Collapsed;
             dpOrderDate.SelectedDate = DateTime.Today;
