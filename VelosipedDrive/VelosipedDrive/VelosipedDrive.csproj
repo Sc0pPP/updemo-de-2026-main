@@ -1,0 +1,44 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>VelosipedDrive</RootNamespace>
+    <AssemblyName>VelosipedDrive</AssemblyName>
+    <ApplicationIcon>Resources\icon.ico</ApplicationIcon>
+    <!-- Запуск на .NET 8 и старше -->
+    <RollForward>LatestMajor</RollForward>
+  </PropertyGroup>
+
+  <!-- Иконка и логотип вшиты в сборку: окна не зависят от файлов на диске -->
+  <ItemGroup>
+    <Resource Include="Resources\icon.ico" />
+    <Resource Include="Resources\icon.png" />
+  </ItemGroup>
+
+  <!-- Фото товаров и заглушка picture.png остаются внешними файлами
+       (обновляемые данные, загружаются кодом с запасным вариантом) -->
+  <ItemGroup>
+    <Content Include="..\images\picture.png">
+      <Link>images\picture.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\images\Products\**\*.JPG">
+      <Link>images\Products\%(RecursiveDir)%(FileName)%(Extension)</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <!-- ADO.NET без NuGet: локальная копия SqlClient, сборка работает офлайн -->
+  <ItemGroup>
+    <Reference Include="lib\System.Data.SqlClient.dll" />
+    <Content Include="lib\sni.dll">
+      <Link>sni.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+</Project>

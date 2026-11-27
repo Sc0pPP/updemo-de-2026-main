@@ -1,0 +1,147 @@
+<Window x:Class="MirIgrushek.CatalogWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Список товаров — ООО «МирИгрушек»" Icon="pack://application:,,,/MirIgrushek;component/Resources/icon.ico"
+        Height="640" Width="1180" MinHeight="480" MinWidth="900"
+        WindowStartupLocation="CenterScreen"
+        FontFamily="Arial" Background="White"
+        Loaded="Window_Loaded">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Border Grid.Row="0" Background="#F5DEB3">
+            <Grid Margin="8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Button Grid.Column="0" Content="Назад" Width="90" Height="30"
+                        Background="White" Cursor="Hand" Click="BtnBack_Click"/>
+                <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center">
+                    <Image Source="pack://application:,,,/MirIgrushek;component/Resources/icon.png" Height="40" Width="40" Stretch="Uniform"/>
+                    <TextBlock Text="Список товаров — ООО «МирИгрушек»" VerticalAlignment="Center"
+                               FontSize="16" FontWeight="Bold" Margin="8,0,0,0"/>
+                </StackPanel>
+                <TextBlock Grid.Column="2" x:Name="txtUser" VerticalAlignment="Center"
+                           FontWeight="Bold" TextAlignment="Right" Margin="8,0"/>
+            </Grid>
+        </Border>
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="8,6">
+            <StackPanel x:Name="panelTools" Orientation="Horizontal" Visibility="Collapsed">
+                <TextBlock Text="Поиск:" VerticalAlignment="Center" Margin="0,0,4,0"/>
+                <TextBox x:Name="txtSearch" Width="200" Height="26"
+                         VerticalContentAlignment="Center"
+                         ToolTip="Поиск по наименованию, описанию, категории, производителю, поставщику и ед. изм."
+                         TextChanged="TxtSearch_TextChanged"/>
+                <TextBlock Text="Сортировка:" VerticalAlignment="Center" Margin="12,0,4,0"/>
+                <ComboBox x:Name="cmbSort" Width="230" Height="26"
+                          SelectionChanged="CmbSort_SelectionChanged">
+                    <ComboBoxItem Content="Без сортировки" IsSelected="True"/>
+                    <ComboBoxItem Content="Цена (по возрастанию)"/>
+                    <ComboBoxItem Content="Цена (по убыванию)"/>
+                    <ComboBoxItem Content="Количество на складе (по возрастанию)"/>
+                    <ComboBoxItem Content="Количество на складе (по убыванию)"/>
+                </ComboBox>
+                <TextBlock Text="Фильтр по поставщику:" VerticalAlignment="Center" Margin="12,0,4,0"/>
+                <ComboBox x:Name="cmbFilter" Width="170" Height="26"
+                          SelectionChanged="CmbFilter_SelectionChanged"/>
+            </StackPanel>
+            <TextBlock x:Name="txtViewOnly" Visibility="Collapsed" VerticalAlignment="Center"
+                       Text="Режим просмотра: поиск, сортировка и фильтрация доступны менеджеру и администратору."
+                       Opacity="0.7"/>
+            <Button x:Name="btnOrders" Content="Заказы" Width="100" Height="30"
+                    Margin="12,0,0,0" Background="#F5DEB3" Cursor="Hand"
+                    Visibility="Collapsed" Click="BtnOrders_Click"/>
+            <Button x:Name="btnAdd" Content="Добавить товар" Width="130" Height="30"
+                    Margin="8,0,0,0" Background="#DEB887" Foreground="White"
+                    FontWeight="Bold" Cursor="Hand" Visibility="Collapsed"
+                    Click="BtnAdd_Click"/>
+            <Button x:Name="btnDelete" Content="Удалить товар" Width="120" Height="30"
+                    Margin="8,0,0,0" Background="White" Cursor="Hand"
+                    Visibility="Collapsed" Click="BtnDelete_Click"/>
+        </StackPanel>
+        <ListView Grid.Row="2" x:Name="listProducts" Margin="8,0,8,8"
+                  MouseDoubleClick="ListProducts_MouseDoubleClick">
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="FontFamily" Value="Arial"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsBigDiscount}" Value="True">
+                            <Setter Property="Background" Value="#FFDEAD"/>
+                            <Setter Property="Foreground" Value="White"/>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding QuantityInStock}" Value="0">
+                            <Setter Property="Background" Value="#ADD8E6"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </ListView.ItemContainerStyle>
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="Фото" Width="86">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <Image Width="70" Height="46" Stretch="Uniform"
+                                       Source="{Binding PhotoImage}"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="Наименование" Width="230"
+                                    DisplayMemberBinding="{Binding ProductName}"/>
+                    <GridViewColumn Header="Категория" Width="170"
+                                    DisplayMemberBinding="{Binding CategoryName}"/>
+                    <GridViewColumn Header="Описание" Width="260"
+                                    DisplayMemberBinding="{Binding ProductDescription}"/>
+                    <GridViewColumn Header="Производитель" Width="120"
+                                    DisplayMemberBinding="{Binding ManufacturerName}"/>
+                    <GridViewColumn Header="Поставщик" Width="130"
+                                    DisplayMemberBinding="{Binding SupplierName}"/>
+                    <GridViewColumn Header="Цена" Width="180">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="{Binding ProductPrice, StringFormat={}{0:0.00} ₽}">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Foreground" Value="Red"/>
+                                                <Setter Property="TextDecorations" Value="Strikethrough"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding CurrentDiscount}" Value="0">
+                                                        <Setter Property="Foreground" Value="Black"/>
+                                                        <Setter Property="TextDecorations" Value="None"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                    <TextBlock Text="{Binding FinalPrice, StringFormat={}{0:0.00} ₽}"
+                                               Foreground="Black" FontWeight="Bold" Margin="8,0,0,0">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding CurrentDiscount}" Value="0">
+                                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                </StackPanel>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="Ед. изм." Width="70"
+                                    DisplayMemberBinding="{Binding UnitName}"/>
+                    <GridViewColumn Header="На складе" Width="90"
+                                    DisplayMemberBinding="{Binding QuantityInStock}"/>
+                    <GridViewColumn Header="Скидка, %" Width="80"
+                                    DisplayMemberBinding="{Binding CurrentDiscount}"/>
+                </GridView>
+            </ListView.View>
+        </ListView>
+    </Grid>
+</Window>
