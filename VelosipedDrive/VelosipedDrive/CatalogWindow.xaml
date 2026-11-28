@@ -65,6 +65,10 @@
             <Button x:Name="btnDelete" Content="Удалить товар" Width="120" Height="30"
                     Margin="8,0,0,0" Background="White" Cursor="Hand"
                     Visibility="Collapsed" Click="BtnDelete_Click"/>
+            <Button x:Name="btnUsers" Content="Пользователи" Width="130" Height="30"
+                    Margin="8,0,0,0" Background="#4B0082" Foreground="White"
+                    FontWeight="Bold" Cursor="Hand" Visibility="Collapsed"
+                    Click="BtnUsers_Click"/>
         </StackPanel>
         <ListView Grid.Row="2" x:Name="listProducts" Margin="8,0,8,8"
                   MouseDoubleClick="ListProducts_MouseDoubleClick">

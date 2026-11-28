@@ -1,0 +1,39 @@
+<Window x:Class="VelosipedDrive.UsersWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Управление пользователями — ООО «ВелосипедДрайв»" Icon="pack://application:,,,/VelosipedDrive;component/Resources/icon.ico"
+        Height="480" Width="780" ResizeMode="CanMinimize"
+        WindowStartupLocation="CenterScreen"
+        FontFamily="Arial" Background="White">
+    <Grid Margin="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,8">
+            <Button x:Name="btnAddUser" Content="Добавить" Width="110" Height="30"
+                    Background="#6A5ACD" Foreground="White" FontWeight="Bold"
+                    Cursor="Hand" Click="BtnAddUser_Click"/>
+            <Button x:Name="btnEditUser" Content="Изменить" Width="110" Height="30"
+                    Margin="8,0,0,0" Background="#4B0082" Cursor="Hand"
+                    Click="BtnEditUser_Click"/>
+            <Button x:Name="btnToggleBlock" Content="Заблокировать" Width="130" Height="30"
+                    Margin="8,0,0,0" Background="#4B0082" Cursor="Hand"
+                    Click="BtnToggleBlock_Click"/>
+            <Button x:Name="btnClose" Content="Назад" Width="90" Height="30"
+                    Margin="8,0,0,0" Background="#4B0082" Cursor="Hand"
+                    Click="BtnClose_Click"/>
+        </StackPanel>
+        <DataGrid Grid.Row="1" x:Name="gridUsers" AutoGenerateColumns="False"
+                  IsReadOnly="True" SelectionMode="Single"
+                  CanUserAddRows="False" BorderBrush="#6A5ACD">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="ID" Binding="{Binding IDUser}" Width="50"/>
+                <DataGridTextColumn Header="ФИО" Binding="{Binding FullName}" Width="200"/>
+                <DataGridTextColumn Header="Логин" Binding="{Binding Login}" Width="210"/>
+                <DataGridTextColumn Header="Роль" Binding="{Binding RoleName}" Width="150"/>
+                <DataGridTextColumn Header="Статус" Binding="{Binding StatusName}" Width="120"/>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</Window>

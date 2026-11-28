@@ -37,6 +37,7 @@ public partial class CatalogWindow : Window
         {
             btnAdd.Visibility = Visibility.Visible;
             btnDelete.Visibility = Visibility.Visible;
+            btnUsers.Visibility = Visibility.Visible;
         }
     }
 
@@ -194,6 +195,13 @@ public partial class CatalogWindow : Window
     {
         OrdersWindow ordersWindow = new OrdersWindow();
         ordersWindow.ShowDialog();
+    }
+
+    /// <summary>Управление пользователями: список, добавление, блокировка (администратор).</summary>
+    private void BtnUsers_Click(object sender, RoutedEventArgs e)
+    {
+        UsersWindow usersWindow = new UsersWindow();
+        usersWindow.ShowDialog();
     }
 
     /// <summary>Проверяет, что окно редактирования товара ещё не открыто:
