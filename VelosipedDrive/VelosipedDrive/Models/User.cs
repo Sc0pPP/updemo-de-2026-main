@@ -11,6 +11,12 @@ public class User
     public string Login { get; set; } = "";
     public string Password { get; set; } = "";
 
+    /// <summary>True — учётная запись заблокирована (после 3 неудачных входов).</summary>
+    public bool IsBlocked { get; set; }
+
+    /// <summary>Статус для отображения: «Активен» или «Заблокирован».</summary>
+    public string StatusName => IsBlocked ? "Заблокирован" : "Активен";
+
     // Название роли (заполняется JOIN-запросом — для отображения)
     public string RoleName { get; set; } = "";
 

@@ -62,7 +62,7 @@ public static class Database
     {
         const string sql =
             "SELECT u.IDUser, u.IDRole, u.UserSurname, u.UserName, u.UserPatronymic, " +
-            "u.Login, u.[Password], r.RoleName " +
+            "u.Login, u.[Password], u.IsBlocked, r.RoleName " +
             "FROM [User] u INNER JOIN Role r ON r.IDRole = u.IDRole " +
             "WHERE u.Login = @Login AND u.[Password] = @Password;";
         List<User> found = Query(sql, MapUser, P("@Login", login), P("@Password", password));
@@ -72,7 +72,7 @@ public static class Database
     /// <summary>Все пользователи с названиями ролей.</summary>
     public static List<User> GetUsers() => Query(
         "SELECT u.IDUser, u.IDRole, u.UserSurname, u.UserName, u.UserPatronymic, " +
-        "u.Login, u.[Password], r.RoleName " +
+        "u.Login, u.[Password], u.IsBlocked, r.RoleName " +
         "FROM [User] u INNER JOIN Role r ON r.IDRole = u.IDRole " +
         "ORDER BY u.IDUser;",
         MapUser);
@@ -86,8 +86,47 @@ public static class Database
         UserPatronymic = r["UserPatronymic"] as string ?? "",
         Login = (string)r["Login"],
         Password = (string)r["Password"],
-        RoleName = (string)r["RoleName"]
+        RoleName = (string)r["RoleName"],
+        IsBlocked = Convert.ToBoolean(r["IsBlocked"])
     };
+
+    /// <summary>Пользователь по логину без проверки пароля; null — не найден.</summary>
+    public static User GetUserByLogin(string login)
+    {
+        const string sql =
+            "SELECT u.IDUser, u.IDRole, u.UserSurname, u.UserName, u.UserPatronymic, " +
+            "u.Login, u.[Password], u.IsBlocked, r.RoleName " +
+            "FROM [User] u INNER JOIN Role r ON r.IDRole = u.IDRole " +
+            "WHERE u.Login = @Login;";
+        List<User> found = Query(sql, MapUser, P("@Login", login));
+        return found.Count > 0 ? found[0] : null;
+    }
+
+    /// <summary>True, если логин уже занят другим пользователем.</summary>
+    public static bool IsLoginTaken(string login, int excludeUserId) =>
+        (int)Scalar("SELECT COUNT(*) FROM [User] WHERE Login = @Login AND IDUser <> @Id;",
+                    P("@Login", login), P("@Id", excludeUserId)) > 0;
+
+    /// <summary>Добавляет пользователя, возвращает присвоенный IDUser.</summary>
+    public static int AddUser(User user) => Convert.ToInt32(Scalar(
+        "INSERT INTO [User] (IDRole, UserSurname, UserName, UserPatronymic, Login, [Password]) " +
+        "VALUES (@Role, @Surname, @Name, @Patronymic, @Login, @Password); SELECT SCOPE_IDENTITY();",
+        P("@Role", user.IDRole), P("@Surname", user.UserSurname), P("@Name", user.UserName),
+        P("@Patronymic", string.IsNullOrWhiteSpace(user.UserPatronymic) ? null : user.UserPatronymic),
+        P("@Login", user.Login), P("@Password", user.Password)));
+
+    /// <summary>Обновляет данные пользователя по IDUser.</summary>
+    public static bool UpdateUser(User user) => NonQuery(
+        "UPDATE [User] SET IDRole = @Role, UserSurname = @Surname, UserName = @Name, " +
+        "UserPatronymic = @Patronymic, Login = @Login, [Password] = @Password WHERE IDUser = @Id;",
+        P("@Role", user.IDRole), P("@Surname", user.UserSurname), P("@Name", user.UserName),
+        P("@Patronymic", string.IsNullOrWhiteSpace(user.UserPatronymic) ? null : user.UserPatronymic),
+        P("@Login", user.Login), P("@Password", user.Password), P("@Id", user.IDUser)) > 0;
+
+    /// <summary>Блокирует или разблокирует учётную запись пользователя.</summary>
+    public static bool SetUserBlocked(int userId, bool blocked) => NonQuery(
+        "UPDATE [User] SET IsBlocked = @Blocked WHERE IDUser = @Id;",
+        P("@Blocked", blocked), P("@Id", userId)) > 0;
 
     // ===================== Справочники =====================
 
